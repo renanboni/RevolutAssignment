@@ -1,7 +1,13 @@
 package com.example.revolutassingment
 
-import android.app.Application
+import com.example.revolutassingment.di.component.DaggerAppComponent
+import dagger.android.AndroidInjector
+import dagger.android.DaggerApplication
 
-class RevolutApp: Application() {
-
+class RevolutApp : DaggerApplication() {
+    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
+        return DaggerAppComponent
+            .factory()
+            .create(applicationContext)
+    }
 }

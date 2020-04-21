@@ -34,7 +34,7 @@
         tools:text="US Dollar" />
 
     <EditText
-        android:id="@+id/currency"
+        android:id="@+id/value"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"

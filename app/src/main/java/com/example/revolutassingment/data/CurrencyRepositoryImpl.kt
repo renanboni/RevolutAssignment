@@ -6,8 +6,9 @@ import com.example.revolutassingment.data.service.CurrencyService
 import com.example.revolutassingment.domain.entities.Currency
 import com.example.revolutassingment.domain.repository.CurrencyRepository
 import io.reactivex.rxjava3.core.Observable
+import javax.inject.Inject
 
-class CurrencyRepositoryImpl(
+class CurrencyRepositoryImpl @Inject constructor(
     private val service: CurrencyService,
     private val mapper: CurrencyRemoteMapper<CurrencyDto, Currency>
 ) : CurrencyRepository {
