@@ -12,7 +12,7 @@ class CurrencyRepositoryImpl @Inject constructor (
     private val mapper: CurrencyRemoteMapperImpl
 ) : CurrencyRepository {
 
-    override fun getRates(): Observable<Currency> {
-        return service.getRates("EUR").map { mapper.mapFromDto(it) }
+    override fun getRates(currency: String): Observable<Currency> {
+        return service.getRates(currency).map { mapper.mapFromDto(it) }
     }
 }

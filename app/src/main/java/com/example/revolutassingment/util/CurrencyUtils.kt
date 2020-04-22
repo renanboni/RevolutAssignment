@@ -4,6 +4,7 @@ import java.util.*
 
 object CurrencyUtils {
     private const val PREFIX = "ic_"
+    private const val DEFAULT_VALUE = 1.0
 
     fun getCurrencySymbol(currency: String): String {
         return Currency.getInstance(currency).displayName
@@ -14,6 +15,14 @@ object CurrencyUtils {
             "$PREFIX${code.toLowerCase(Locale.getDefault())}"
         } else {
             ""
+        }
+    }
+
+    fun normalizeValue(value: String): Double {
+        return if (value.isEmpty() || value == ".") {
+            DEFAULT_VALUE
+        } else {
+            value.toDouble()
         }
     }
 }

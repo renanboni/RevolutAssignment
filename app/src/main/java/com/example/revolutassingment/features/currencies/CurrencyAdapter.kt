@@ -6,16 +6,19 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
 import com.example.revolutassingment.R
 import com.example.revolutassingment.domain.entities.Rate
 import com.example.revolutassingment.util.CurrencyUtils
 import com.example.revolutassingment.util.ext.getDrawableFromName
+import javax.inject.Inject
 
-class CurrencyAdapter(
-    private val rates: List<Rate>,
-    private val listener: (Rate) -> Unit
-) : RecyclerView.Adapter<CurrencyAdapter.CurrencyViewHolder>() {
+class CurrencyAdapter @Inject constructor() :
+    RecyclerView.Adapter<CurrencyAdapter.CurrencyViewHolder>() {
+
+    private var rates: MutableList<Rate> = mutableListOf()
+    private var listener: OnRateValueChanged? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CurrencyViewHolder {
         val inflater = LayoutInflater
@@ -31,7 +34,16 @@ class CurrencyAdapter(
         holder.bind(rates[position])
     }
 
-    inner class CurrencyViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    fun setListener(listener: OnRateValueChanged) {
+        this.listener = listener
+    }
+
+    fun setRates(rates: MutableList<Rate>) {
+        this.rates = rates
+        notifyDataSetChanged()
+    }
+
+    inner class CurrencyViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         private val flag = view.findViewById<ImageView>(R.id.flag)
         private val title = view.findViewById<TextView>(R.id.title)
         private val subtitle = view.findViewById<TextView>(R.id.subtitle)
@@ -43,8 +55,29 @@ class CurrencyAdapter(
             subtitle.text = CurrencyUtils.getCurrencySymbol(rate.symbol)
             flag.setImageResource(view.getDrawableFromName(CurrencyUtils.normalizeCode(rate.symbol)))
 
-            value.setOnClickListener {
-                listener(rate)
+            value.setOnFocusChangeListener { _, hasFocus ->
+                if (hasFocus) {
+                    moveToTop()
+                }
+            }
+
+            value.addTextChangedListener {
+                value.setSelection(it.toString().length)
+
+                if (value.isFocused) {
+                    listener?.onChanged(rate.symbol, CurrencyUtils.normalizeValue(it.toString()))
+                }
+            }
+        }
+
+        private fun moveToTop() {
+            if (layoutPosition > 0) {
+                rates.removeAt(layoutPosition).also {
+                    rates.add(0, it)
+                    listener?.onChanged(it.symbol, it.value)
+                }
+
+                notifyItemMoved(layoutPosition, 0)
             }
         }
     }

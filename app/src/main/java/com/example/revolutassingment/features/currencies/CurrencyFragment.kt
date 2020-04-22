@@ -13,10 +13,13 @@ import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_currency.*
 import javax.inject.Inject
 
-class CurrencyFragment : DaggerFragment() {
+class CurrencyFragment : DaggerFragment(), OnRateValueChanged {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    @Inject
+    lateinit var adapter: CurrencyAdapter
 
     private val viewModel by viewModels<CurrencyViewModel> { viewModelFactory }
 
@@ -39,15 +42,17 @@ class CurrencyFragment : DaggerFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        adapter.setListener(this)
+        currencies.adapter = adapter
+
         viewModel.ratesViewState.observe(viewLifecycleOwner, Observer { renderRates(it) })
         viewModel.loadingViewState.observe(viewLifecycleOwner, Observer { renderLoading(it) })
         viewModel.errorViewState.observe(viewLifecycleOwner, Observer { renderError(it) })
     }
 
-    private fun renderRates(rates: List<Rate>) {
-        currencies.adapter = CurrencyAdapter(rates) {
-
-        }
+    private fun renderRates(rates: MutableList<Rate>) {
+        adapter.setRates(rates)
     }
 
     private fun renderLoading(isLoading: Boolean) {
@@ -56,6 +61,10 @@ class CurrencyFragment : DaggerFragment() {
 
     private fun renderError(msg: String) {
 
+    }
+
+    override fun onChanged(currency: String, value: Double) {
+        viewModel.getRates(currency, value)
     }
 }
 
