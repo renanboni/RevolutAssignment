@@ -12,6 +12,9 @@ import com.example.revolutassingment.R
 import com.example.revolutassingment.domain.entities.Rate
 import com.example.revolutassingment.util.CurrencyUtils
 import com.example.revolutassingment.util.ext.getDrawableFromName
+import com.jakewharton.rxbinding2.view.RxView
+import com.jakewharton.rxbinding2.widget.RxTextView
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class CurrencyAdapter @Inject constructor() :

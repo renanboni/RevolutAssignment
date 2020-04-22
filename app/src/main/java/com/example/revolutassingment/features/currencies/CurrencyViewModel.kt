@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.example.revolutassingment.domain.entities.Currency
 import com.example.revolutassingment.domain.entities.Rate
 import com.example.revolutassingment.domain.usecases.GetRatesUseCase
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -24,27 +25,28 @@ class CurrencyViewModel @Inject constructor(
     private val loadingState = MutableLiveData<Boolean>()
     val loadingViewState: LiveData<Boolean> = loadingState
 
-    private val errorState = MutableLiveData<String>()
-    val errorViewState: LiveData<String> = errorState
+    private val errorState = MutableLiveData<Unit>()
+    val errorViewState: LiveData<Unit> = errorState
 
     private var disposables = CompositeDisposable()
+
+    init {
+        getRates()
+    }
 
     fun getRates(currency: String? = "", value: Double = 0.0) {
         if (isRateUpdatedByUser(currency, value)) {
             disposables.clear()
         }
 
-        disposables.add(getRatesUseCase(currency)
-            .delay(1, TimeUnit.SECONDS)
+        disposables.add(Observable.interval(1, TimeUnit.SECONDS)
+            .flatMap { getRatesUseCase(currency) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe { loadingState.postValue(true) }
-            .doOnComplete { loadingState.postValue(false) }
-            .repeat()
             .subscribe({
                 onGetRatesSuccess(it, value)
             }, {
-                errorState.postValue(it.localizedMessage.orEmpty())
+                errorState.postValue(Unit)
             })
         )
     }
@@ -64,7 +66,7 @@ class CurrencyViewModel @Inject constructor(
     }
 
     private fun isRateUpdatedByUser(currency: String?, value: Double) =
-        !currency.isNullOrEmpty() && value != 0.0
+        !currency.isNullOrEmpty() && value >= 1
 
     override fun onCleared() {
         super.onCleared()

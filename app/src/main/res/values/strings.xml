@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Rates</string>
     <string name="country_flag">flag of a country</string>
+    <string name="error_title">Ops...</string>
+    <string name="error_message">Something went bad over here...</string>
+    <string name="try_again">Try again</string>
+    <string name="cancel">Cancel</string>
 </resources>
