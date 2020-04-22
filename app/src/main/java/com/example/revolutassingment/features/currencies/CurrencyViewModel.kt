@@ -3,33 +3,38 @@ package com.example.revolutassingment.features.currencies
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.revolutassingment.domain.domain.GetRatesUseCase
 import com.example.revolutassingment.domain.entities.Rate
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.schedulers.Schedulers
+import com.example.revolutassingment.domain.usecases.GetRatesUseCase
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class CurrencyViewModel @Inject constructor(
     private val getRatesUseCase: GetRatesUseCase
 ) : ViewModel() {
 
-    private val viewState = MutableLiveData<CurrencyViewState>()
-    val currencyViewState: LiveData<CurrencyViewState> = viewState
+    private val ratesState = MutableLiveData<List<Rate>>()
+    val ratesViewState: LiveData<List<Rate>> = ratesState
+
+    private val loadingState = MutableLiveData<Boolean>()
+    val loadingViewState: LiveData<Boolean> = loadingState
+
+    private val errorState = MutableLiveData<String>()
+    val errorViewState: LiveData<String> = errorState
 
     private var disposables = CompositeDisposable()
 
     fun getRates() {
-        disposables.add(getRatesUseCase.execute()
+        disposables.add(getRatesUseCase()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe { viewState.postValue(CurrencyViewState.ShowLoading) }
+            .doOnSubscribe { loadingState.postValue(true) }
+            .doOnComplete { loadingState.postValue(false) }
             .subscribe({
-                viewState.postValue(CurrencyViewState.HideLoading)
-                viewState.postValue(CurrencyViewState.Rates(it.rates))
+                ratesState.postValue(it.rates)
             }, {
-                viewState.postValue(CurrencyViewState.HideLoading)
-                viewState.postValue(CurrencyViewState.Error(it.localizedMessage.orEmpty()))
+                errorState.postValue(it.localizedMessage.orEmpty())
             })
         )
     }
@@ -37,12 +42,5 @@ class CurrencyViewModel @Inject constructor(
     override fun onCleared() {
         super.onCleared()
         disposables.clear()
-    }
-
-    sealed class CurrencyViewState {
-        object ShowLoading : CurrencyViewState()
-        object HideLoading : CurrencyViewState()
-        data class Rates(val rates: List<Rate>) : CurrencyViewState()
-        data class Error(val message: String) : CurrencyViewState()
     }
 }

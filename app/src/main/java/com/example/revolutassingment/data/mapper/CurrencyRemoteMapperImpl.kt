@@ -3,13 +3,14 @@ package com.example.revolutassingment.data.mapper
 import com.example.revolutassingment.data.dto.CurrencyDto
 import com.example.revolutassingment.domain.entities.Currency
 import com.example.revolutassingment.domain.entities.Rate
+import javax.inject.Inject
 
-class CurrencyRemoteMapperImpl : CurrencyRemoteMapper<CurrencyDto, Currency> {
+class CurrencyRemoteMapperImpl @Inject constructor() : CurrencyRemoteMapper<CurrencyDto, Currency> {
     override fun mapFromDto(dto: CurrencyDto): Currency {
         return Currency(
             baseCurrency = dto.baseCurrency.orEmpty(),
             rates = dto.rates
                 .orEmpty()
-                .map { Rate(symbol = it.symbol.orEmpty(), value = it.value ?: 0.0) })
+                .map { Rate(symbol = it.key, value = it.value) })
     }
 }

@@ -4,5 +4,5 @@ import com.google.gson.annotations.SerializedName
 
 data class CurrencyDto(
     @SerializedName("baseCurrency") val baseCurrency: String? = "",
-    @SerializedName("rates") val rates: List<RateDto>? = listOf()
+    @SerializedName("rates") val rates: Map<String, Double>? = mapOf()
 )

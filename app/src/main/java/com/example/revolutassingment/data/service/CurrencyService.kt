@@ -1,11 +1,12 @@
 package com.example.revolutassingment.data.service
 
 import com.example.revolutassingment.data.dto.CurrencyDto
-import io.reactivex.rxjava3.core.Observable
+import io.reactivex.Observable
 import retrofit2.http.GET
+import retrofit2.http.Query
 
 interface CurrencyService {
 
-    @GET("")
-    fun getRates(): Observable<CurrencyDto>
+    @GET("api/android/latest")
+    fun getRates(@Query("base") currency: String): Observable<CurrencyDto>
 }
