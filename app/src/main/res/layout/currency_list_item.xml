@@ -7,37 +7,44 @@
     android:padding="16dp">
 
     <ImageView
-        android:id="@+id/country"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/flag"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:contentDescription="@string/country_flag"
-        android:src="@drawable/ic_sweden"
+        android:src="@drawable/ic_brl"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/title"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@id/country"
-        app:layout_constraintTop_toTopOf="@id/country"
-        tools:text="USD" />
+        app:layout_constraintEnd_toStartOf="@id/value"
+        app:layout_constraintStart_toEndOf="@id/flag"
+        app:layout_constraintTop_toTopOf="@id/flag"
+        tools:text="BRL" />
 
     <TextView
         android:id="@+id/subtitle"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@id/value"
         app:layout_constraintStart_toStartOf="@id/title"
         app:layout_constraintTop_toBottomOf="@id/title"
-        tools:text="US Dollar" />
+        tools:text="Reais" />
 
     <EditText
         android:id="@+id/value"
-        android:layout_width="100dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="end"
+        android:maxLength="10"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toEndOf="@id/subtitle"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="1234" />
 </androidx.constraintlayout.widget.ConstraintLayout>
