@@ -40,12 +40,16 @@ class CurrencyFragment : DaggerFragment(), OnRateValueChanged {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter.setListener(this)
-        currencies.adapter = adapter
+        setupAdapter()
 
         viewModel.ratesViewState.observe(viewLifecycleOwner, Observer { renderRates(it) })
         viewModel.loadingViewState.observe(viewLifecycleOwner, Observer { renderLoading(it) })
         viewModel.errorViewState.observe(viewLifecycleOwner, Observer { renderError() })
+    }
+
+    private fun setupAdapter() {
+        adapter.setListener(this)
+        currencies.adapter = adapter
     }
 
     private fun renderRates(rates: MutableList<Rate>) {
