@@ -79,16 +79,3 @@ class CurrencyFragment : DaggerFragment(), OnRateValueChanged {
         viewModel.getRates(currency, value)
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

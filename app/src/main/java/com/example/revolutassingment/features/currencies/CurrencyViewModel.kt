@@ -31,20 +31,21 @@ class CurrencyViewModel @Inject constructor(
     private var disposables = CompositeDisposable()
 
     init {
+        loadingState.value = true
         getRates()
     }
 
-    fun getRates(currency: String? = "", value: Double = 0.0) {
-        if (isRateUpdatedByUser(currency, value)) {
+    fun getRates(currency: String? = "", amount: Double = 0.0) {
+        if (isRateUpdatedByUser(currency)) {
             disposables.clear()
         }
 
         disposables.add(Observable.interval(1, TimeUnit.SECONDS)
             .flatMap { getRatesUseCase(currency) }
-            .subscribeOn(Schedulers.io())
+            .distinctUntilChanged()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                onGetRatesSuccess(it, value)
+                onGetRatesSuccess(it, amount)
             }, {
                 errorState.postValue(Unit)
             })
@@ -53,20 +54,19 @@ class CurrencyViewModel @Inject constructor(
 
     private fun onGetRatesSuccess(
         currency: Currency,
-        value: Double
+        amount: Double
     ) {
         val rates = currency.rates.toMutableList()
         rates.add(0, Rate(currency.baseCurrency, DEFAULT_VALUE))
 
-        if (value > 0) {
-            rates.map { it.value = it.value * value }
+        if (amount > 0) {
+            rates.map { it.value = it.value * amount }
         }
 
         ratesState.postValue(rates)
     }
 
-    private fun isRateUpdatedByUser(currency: String?, value: Double) =
-        !currency.isNullOrEmpty() && value >= 1
+    private fun isRateUpdatedByUser(currency: String?) = !currency.isNullOrEmpty()
 
     override fun onCleared() {
         super.onCleared()

@@ -1,11 +1,14 @@
 package com.example.revolutassingment.features.currencies
 
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
 import com.example.revolutassingment.R
@@ -51,6 +54,7 @@ class CurrencyAdapter @Inject constructor() :
         private val title = view.findViewById<TextView>(R.id.title)
         private val subtitle = view.findViewById<TextView>(R.id.subtitle)
         private val value = view.findViewById<EditText>(R.id.value)
+        private val root = view.findViewById<ConstraintLayout>(R.id.root)
 
         fun bind(rate: Rate) {
             title.text = rate.symbol
@@ -58,17 +62,27 @@ class CurrencyAdapter @Inject constructor() :
             subtitle.text = CurrencyUtils.getCurrencySymbol(rate.symbol)
             flag.setImageResource(view.getDrawableFromName(CurrencyUtils.normalizeCode(rate.symbol)))
 
-            value.setOnFocusChangeListener { _, hasFocus ->
-                if (hasFocus) {
-                    moveToTop()
+            val textWatcher = object : TextWatcher {
+                override fun afterTextChanged(p0: Editable?) {}
+                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+                override fun onTextChanged(s: CharSequence, p1: Int, p2: Int, p3: Int) {
+                    if (adapterPosition == 0) {
+                        listener?.onChanged(rate.symbol, CurrencyUtils.normalizeValue(s.toString()))
+                    }
                 }
             }
 
-            value.addTextChangedListener {
-                value.setSelection(it.toString().length)
+            root.setOnClickListener {
+                value.requestFocus()
+            }
 
-                if (value.isFocused) {
-                    listener?.onChanged(rate.symbol, CurrencyUtils.normalizeValue(it.toString()))
+            value.setOnFocusChangeListener { _, hasFocus ->
+                if (hasFocus) {
+                    moveToTop()
+                    value.setSelection(value.text.toString().length)
+                    value.addTextChangedListener(textWatcher)
+                } else {
+                    value.removeTextChangedListener(textWatcher)
                 }
             }
         }

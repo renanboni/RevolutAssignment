@@ -2,6 +2,7 @@ package com.example.revolutassingment.di.component
 
 import android.content.Context
 import com.example.revolutassingment.RevolutApp
+import com.example.revolutassingment.di.module.AppModule
 import com.example.revolutassingment.di.module.CurrencyModule
 import com.example.revolutassingment.di.module.NetworkModule
 import dagger.BindsInstance
@@ -15,6 +16,7 @@ import javax.inject.Singleton
 @Component(
     modules = [
         AndroidSupportInjectionModule::class,
+        AppModule::class,
         CurrencyModule::class,
         NetworkModule::class
     ]
