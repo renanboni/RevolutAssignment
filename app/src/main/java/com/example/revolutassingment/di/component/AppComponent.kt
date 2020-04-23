@@ -16,9 +16,9 @@ import javax.inject.Singleton
 @Component(
     modules = [
         AndroidSupportInjectionModule::class,
-        AppModule::class,
         CurrencyModule::class,
-        NetworkModule::class
+        NetworkModule::class,
+        AppModule::class
     ]
 )
 interface AppComponent : AndroidInjector<RevolutApp> {

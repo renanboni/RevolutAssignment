@@ -1,5 +1,6 @@
-package com.example.revolutassingment.domain
+package com.example.revolutassingment.core
 
+import com.example.revolutassingment.domain.SchedulerProvider
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers

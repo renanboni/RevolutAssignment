@@ -17,9 +17,11 @@ class GetRatesUseCase @Inject constructor(
         return if (currency.isNullOrEmpty()) {
             currencyRepository.getRates(getCurrency())
                 .subscribeOn(scheduler.io)
+                .observeOn(scheduler.mainThread)
         } else {
             currencyRepository.getRates(currency)
                 .subscribeOn(scheduler.io)
+                .observeOn(scheduler.mainThread)
         }
     }
 

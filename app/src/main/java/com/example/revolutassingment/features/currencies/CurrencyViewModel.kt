@@ -7,9 +7,7 @@ import com.example.revolutassingment.domain.entities.Currency
 import com.example.revolutassingment.domain.entities.Rate
 import com.example.revolutassingment.domain.usecases.GetRatesUseCase
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -31,7 +29,6 @@ class CurrencyViewModel @Inject constructor(
     private var disposables = CompositeDisposable()
 
     init {
-        loadingState.value = true
         getRates()
     }
 
@@ -43,7 +40,6 @@ class CurrencyViewModel @Inject constructor(
         disposables.add(Observable.interval(1, TimeUnit.SECONDS)
             .flatMap { getRatesUseCase(currency) }
             .distinctUntilChanged()
-            .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 onGetRatesSuccess(it, amount)
             }, {
