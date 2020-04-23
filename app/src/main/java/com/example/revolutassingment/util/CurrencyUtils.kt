@@ -1,6 +1,7 @@
 package com.example.revolutassingment.util
 
-import java.util.*
+import java.util.Currency
+import java.util.Locale
 
 object CurrencyUtils {
     private const val PREFIX = "ic_"

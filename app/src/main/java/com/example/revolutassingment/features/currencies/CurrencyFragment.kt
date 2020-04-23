@@ -12,7 +12,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.revolutassingment.R
 import com.example.revolutassingment.domain.entities.Rate
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.main.fragment_currency.*
+import kotlinx.android.synthetic.main.fragment_currency.currencies
+import kotlinx.android.synthetic.main.fragment_currency.loading
 import javax.inject.Inject
 
 class CurrencyFragment : DaggerFragment(), OnRateValueChanged {
@@ -43,7 +44,6 @@ class CurrencyFragment : DaggerFragment(), OnRateValueChanged {
         setupAdapter()
 
         viewModel.ratesViewState.observe(viewLifecycleOwner, Observer { renderRates(it) })
-        viewModel.loadingViewState.observe(viewLifecycleOwner, Observer { renderLoading(it) })
         viewModel.errorViewState.observe(viewLifecycleOwner, Observer { renderError() })
     }
 
@@ -53,16 +53,8 @@ class CurrencyFragment : DaggerFragment(), OnRateValueChanged {
     }
 
     private fun renderRates(rates: MutableList<Rate>) {
-        renderLoading(false)
+        loading.visibility = View.GONE
         adapter.setRates(rates)
-    }
-
-    private fun renderLoading(isLoading: Boolean) {
-        if (isLoading) {
-            loading.visibility = View.VISIBLE
-        } else {
-            loading.visibility = View.GONE
-        }
     }
 
     private fun renderError() {

@@ -4,7 +4,7 @@ import com.example.revolutassingment.domain.SchedulerProvider
 import com.example.revolutassingment.domain.entities.Currency
 import com.example.revolutassingment.domain.repository.CurrencyRepository
 import io.reactivex.Observable
-import java.util.*
+import java.util.Locale
 import javax.inject.Inject
 
 private const val DEFAULT_CURRENCY = "EUR"

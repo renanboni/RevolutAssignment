@@ -1,11 +1,8 @@
 package com.example.revolutassingment.di.module
 
 import com.example.revolutassingment.data.CurrencyRepositoryImpl
-import com.example.revolutassingment.data.dto.CurrencyDto
-import com.example.revolutassingment.data.mapper.CurrencyRemoteMapper
 import com.example.revolutassingment.data.mapper.CurrencyRemoteMapperImpl
 import com.example.revolutassingment.data.service.CurrencyService
-import com.example.revolutassingment.domain.entities.Currency
 import com.example.revolutassingment.domain.repository.CurrencyRepository
 import com.google.gson.Gson
 import dagger.Module

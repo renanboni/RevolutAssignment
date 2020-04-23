@@ -20,9 +20,6 @@ class CurrencyViewModel @Inject constructor(
     private val ratesState = MutableLiveData<MutableList<Rate>>()
     val ratesViewState: LiveData<MutableList<Rate>> = ratesState
 
-    private val loadingState = MutableLiveData<Boolean>()
-    val loadingViewState: LiveData<Boolean> = loadingState
-
     private val errorState = MutableLiveData<Unit>()
     val errorViewState: LiveData<Unit> = errorState
 

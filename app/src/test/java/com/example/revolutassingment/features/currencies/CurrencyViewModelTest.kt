@@ -5,7 +5,12 @@ import androidx.lifecycle.Observer
 import com.example.revolutassingment.domain.entities.Currency
 import com.example.revolutassingment.domain.entities.Rate
 import com.example.revolutassingment.domain.usecases.GetRatesUseCase
-import com.nhaarman.mockitokotlin2.*
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.argumentCaptor
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.times
 import io.reactivex.Observable
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.TestScheduler
@@ -69,7 +74,7 @@ class CurrencyViewModelTest {
     }
 
     @Test
-    fun `WHEN  getRates is called THEN currencyViewModel SHOULD throw exception`() {
+    fun `WHEN getRates is called THEN currencyViewModel SHOULD throw exception`() {
         whenever(getRatesUseCase(any())).thenReturn(Observable.error(Throwable()))
 
         currencyViewModel.getRates("EUR", 4.0)
