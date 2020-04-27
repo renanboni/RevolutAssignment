@@ -1,11 +1,11 @@
 package com.example.revolutassingment.features.currencies
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.view.ContextThemeWrapper
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -38,6 +38,11 @@ class CurrencyFragment : DaggerFragment(), OnRateValueChanged {
         )
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.getRates()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -54,20 +59,18 @@ class CurrencyFragment : DaggerFragment(), OnRateValueChanged {
 
     private fun renderRates(rates: MutableList<Rate>) {
         loading.visibility = View.GONE
-        adapter.setRates(rates)
+        adapter.submitList(rates)
     }
 
     private fun renderError() {
-        AlertDialog.Builder(ContextThemeWrapper(context, R.style.AlertDialogTheme))
-            .setCancelable(false)
-            .setTitle(getString(R.string.error_title))
-            .setMessage(getString(R.string.error_message))
-            .setPositiveButton(getString(R.string.try_again)) { _, _ -> viewModel.getRates() }
-            .setNegativeButton(getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
-            .show()
+        Toast.makeText(requireContext(), getString(R.string.error), Toast.LENGTH_LONG).show()
     }
 
-    override fun onChanged(currency: String, value: Double) {
-        viewModel.getRates(currency, value)
+    override fun onRateChanged(currency: String, value: Double) {
+        viewModel.updateRates(currency, value)
+    }
+
+    override fun onBaseCurrencyChanged(currency: String, value: Double, currentList: MutableList<Rate>) {
+        viewModel.updateBaseCurrency(currency, value, currentList)
     }
 }

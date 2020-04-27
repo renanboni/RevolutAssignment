@@ -9,6 +9,7 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import io.reactivex.Observable
 import org.junit.Test
+import org.mockito.ArgumentMatchers.anyString
 
 class GetRatesUseCaseTest {
 
@@ -42,7 +43,7 @@ class GetRatesUseCaseTest {
 
         whenever(repository.getRates(any())).thenReturn(Observable.just(currency))
 
-        getRates()
+        getRates(anyString())
             .test()
             .assertValue(currency)
     }

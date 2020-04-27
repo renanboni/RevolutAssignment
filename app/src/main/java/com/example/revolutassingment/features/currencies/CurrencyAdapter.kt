@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
+import androidx.recyclerview.widget.ListAdapter
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
@@ -16,10 +17,10 @@ import com.example.revolutassingment.util.CurrencyUtils
 import com.example.revolutassingment.util.ext.getDrawableFromName
 import javax.inject.Inject
 
-class CurrencyAdapter @Inject constructor() :
-    RecyclerView.Adapter<CurrencyAdapter.CurrencyViewHolder>() {
+class CurrencyAdapter @Inject constructor(
+    diffCallback: CurrencyDiffCallback
+) : ListAdapter<Rate, CurrencyAdapter.CurrencyViewHolder>(diffCallback) {
 
-    private var rates: MutableList<Rate> = mutableListOf()
     private var listener: OnRateValueChanged? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CurrencyViewHolder {
@@ -30,19 +31,25 @@ class CurrencyAdapter @Inject constructor() :
         return CurrencyViewHolder(inflater)
     }
 
-    override fun getItemCount() = rates.count()
-
     override fun onBindViewHolder(holder: CurrencyViewHolder, position: Int) {
-        holder.bind(rates[position])
+        holder.bind(getItem(position))
+    }
+
+    override fun onBindViewHolder(
+        holder: CurrencyViewHolder,
+        position: Int,
+        payloads: MutableList<Any>
+    ) {
+        if (payloads.isEmpty()) {
+            super.onBindViewHolder(holder, position, payloads)
+        } else {
+            val amount = payloads.first() as Double
+            holder.setValue(amount)
+        }
     }
 
     fun setListener(listener: OnRateValueChanged) {
         this.listener = listener
-    }
-
-    fun setRates(rates: MutableList<Rate>) {
-        this.rates = rates
-        notifyDataSetChanged()
     }
 
     inner class CurrencyViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
@@ -62,9 +69,7 @@ class CurrencyAdapter @Inject constructor() :
                 override fun afterTextChanged(p0: Editable?) {}
                 override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
                 override fun onTextChanged(s: CharSequence, p1: Int, p2: Int, p3: Int) {
-                    if (adapterPosition == 0) {
-                        listener?.onChanged(rate.symbol, CurrencyUtils.normalizeValue(s.toString()))
-                    }
+                    listener?.onRateChanged(rate.symbol, CurrencyUtils.normalizeValue(s.toString()))
                 }
             }
 
@@ -74,23 +79,20 @@ class CurrencyAdapter @Inject constructor() :
 
             value.setOnFocusChangeListener { _, hasFocus ->
                 if (hasFocus) {
-                    moveToTop()
-                    value.setSelection(value.text.toString().length)
                     value.addTextChangedListener(textWatcher)
                 } else {
                     value.removeTextChangedListener(textWatcher)
                 }
+
+                if (layoutPosition > 0) {
+                    listener?.onBaseCurrencyChanged(rate.symbol, rate.value, currentList)
+                }
             }
         }
 
-        private fun moveToTop() {
-            if (layoutPosition > 0) {
-                rates.removeAt(layoutPosition).also {
-                    rates.add(0, it)
-                    listener?.onChanged(it.symbol, it.value)
-                }
-
-                notifyItemMoved(layoutPosition, 0)
+        fun setValue(amount: Double) {
+            if (!value.isFocused) {
+                value.setText(amount.toString())
             }
         }
     }

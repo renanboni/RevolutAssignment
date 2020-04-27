@@ -3,18 +3,19 @@ package com.example.revolutassingment.features.currencies
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.revolutassingment.domain.entities.Currency
+import com.example.revolutassingment.core.CurrencyCalculator
 import com.example.revolutassingment.domain.entities.Rate
+import com.example.revolutassingment.domain.usecases.GetCurrencyUseCase
 import com.example.revolutassingment.domain.usecases.GetRatesUseCase
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-private const val DEFAULT_VALUE = 1.0
-
 class CurrencyViewModel @Inject constructor(
-    private val getRatesUseCase: GetRatesUseCase
+    private val getRatesUseCase: GetRatesUseCase,
+    private val getCurrencyUseCase: GetCurrencyUseCase,
+    private val currencyCalculator: CurrencyCalculator
 ) : ViewModel() {
 
     private val ratesState = MutableLiveData<MutableList<Rate>>()
@@ -25,41 +26,44 @@ class CurrencyViewModel @Inject constructor(
 
     private var disposables = CompositeDisposable()
 
-    init {
-        getRates()
+    fun updateRates(currency: String, amount: Double) {
+        ratesState.value = (currencyCalculator.onCurrencyChanged(currency, amount))
     }
 
-    fun getRates(currency: String? = "", amount: Double = 0.0) {
-        if (isRateUpdatedByUser(currency)) {
+    fun updateBaseCurrency(currency: String, amount: Double, currentList: MutableList<Rate>) {
+        getRates(currency, amount, true, currentList)
+    }
+
+    fun getRates(
+        currency: String = "",
+        amount: Double = 1.0,
+        shouldUpdate: Boolean = false,
+        currentList: MutableList<Rate> = mutableListOf()
+    ) {
+        if (!ratesState.value.isNullOrEmpty() && !shouldUpdate) {
+            return
+        }
+
+        if (shouldUpdate) {
             disposables.clear()
+            ratesState.value = (currencyCalculator.onNewBaseCurrencySelected(currency, amount, currentList).toMutableList())
         }
 
         disposables.add(Observable.interval(1, TimeUnit.SECONDS)
-            .flatMap { getRatesUseCase(currency) }
-            .distinctUntilChanged()
+            .flatMap {
+                if (currency.isEmpty()) {
+                    getRatesUseCase(getCurrencyUseCase())
+                } else {
+                    getRatesUseCase(currency)
+                }
+            }
             .subscribe({
-                onGetRatesSuccess(it, amount)
+                ratesState.postValue(currencyCalculator.onNewRates(it).toMutableList())
             }, {
                 errorState.postValue(Unit)
             })
         )
     }
-
-    private fun onGetRatesSuccess(
-        currency: Currency,
-        amount: Double
-    ) {
-        val rates = currency.rates.toMutableList()
-        rates.add(0, Rate(currency.baseCurrency, DEFAULT_VALUE))
-
-        if (amount > 0) {
-            rates.map { it.value = it.value * amount }
-        }
-
-        ratesState.postValue(rates)
-    }
-
-    private fun isRateUpdatedByUser(currency: String?) = !currency.isNullOrEmpty()
 
     override fun onCleared() {
         super.onCleared()

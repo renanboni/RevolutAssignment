@@ -20,10 +20,15 @@ object CurrencyUtils {
     }
 
     fun normalizeValue(value: String): Double {
-        return if (value.isEmpty() || value == ".") {
+        return if (value.isEmpty()) {
             DEFAULT_VALUE
         } else {
-            value.toDouble()
+            return try {
+                value.toDouble()
+            } catch (e: NumberFormatException) {
+                DEFAULT_VALUE
+            }
         }
     }
 }
+

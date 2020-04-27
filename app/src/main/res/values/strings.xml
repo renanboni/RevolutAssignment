@@ -5,4 +5,5 @@
     <string name="error_message">Something went bad over here...</string>
     <string name="try_again">Try again</string>
     <string name="cancel">Cancel</string>
+    <string name="error">Error!</string>
 </resources>

@@ -2,8 +2,10 @@ package com.example.revolutassingment.features.currencies
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
+import com.example.revolutassingment.core.CurrencyCalculator
 import com.example.revolutassingment.domain.entities.Currency
 import com.example.revolutassingment.domain.entities.Rate
+import com.example.revolutassingment.domain.usecases.GetCurrencyUseCase
 import com.example.revolutassingment.domain.usecases.GetRatesUseCase
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
@@ -26,7 +28,10 @@ class CurrencyViewModelTest {
     @get:Rule
     var rule: TestRule = InstantTaskExecutorRule()
 
-    private var getRatesUseCase: GetRatesUseCase = mock()
+    private val getRatesUseCase: GetRatesUseCase = mock()
+    private val getCurrencyUseCase: GetCurrencyUseCase = mock()
+    private val calculator: CurrencyCalculator = mock()
+
     private val rateObserver: Observer<MutableList<Rate>> = mock()
     private val errorObserver: Observer<Unit> = mock()
 
@@ -38,7 +43,7 @@ class CurrencyViewModelTest {
     fun setup() {
         RxJavaPlugins.setComputationSchedulerHandler { testScheduler }
 
-        currencyViewModel = CurrencyViewModel(getRatesUseCase)
+        currencyViewModel = CurrencyViewModel(getRatesUseCase, getCurrencyUseCase, calculator)
         currencyViewModel.ratesViewState.observeForever(rateObserver)
         currencyViewModel.errorViewState.observeForever(errorObserver)
     }
@@ -46,6 +51,7 @@ class CurrencyViewModelTest {
     @Test
     fun `WHEN getRates is called THEN currencyViewModel SHOULD call use case`() {
         whenever(getRatesUseCase(any())).thenReturn(Observable.just(getCurrency()))
+        whenever(getCurrencyUseCase()).thenReturn("EUR")
 
         currencyViewModel.getRates("EUR", 4.0)
 
@@ -57,10 +63,11 @@ class CurrencyViewModelTest {
     @Test
     fun `WHEN getRates is called THEN currencyViewModel SHOULD emit currency`() {
         val currency = Currency(baseCurrency = "BRL", rates = listOf(Rate("EUR", 1.0)))
-        val expectedCurrency =
-            Currency(baseCurrency = "BRL", rates = listOf(Rate("BRL", 2.0), Rate("EUR", 2.0)))
+        val expectedCurrency = Currency(baseCurrency = "BRL", rates = listOf(Rate("BRL", 2.0), Rate("EUR", 2.0)))
 
         whenever(getRatesUseCase(any())).thenReturn(Observable.just(currency))
+        whenever(calculator.onNewRates(currency)).thenReturn(expectedCurrency.rates)
+        whenever(getCurrencyUseCase()).thenReturn("BRL")
 
         currencyViewModel.getRates("BRL", 2.0)
 
