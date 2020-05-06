@@ -1,4 +1,4 @@
-package com.example.revolutassingment.core
+package com.example.revolutassingment.domain
 
 import com.example.revolutassingment.domain.entities.Currency
 import com.example.revolutassingment.domain.entities.Rate

@@ -61,7 +61,7 @@ class CurrencyAdapter @Inject constructor(
 
         fun bind(rate: Rate) {
             title.text = rate.symbol
-            value.setText(rate.value.toString())
+            value.setText(CurrencyUtils.formatValue(rate.value))
             subtitle.text = CurrencyUtils.getCurrencySymbol(rate.symbol)
             flag.setImageResource(view.getDrawableFromName(CurrencyUtils.normalizeCode(rate.symbol)))
 
@@ -92,7 +92,7 @@ class CurrencyAdapter @Inject constructor(
 
         fun setValue(amount: Double) {
             if (!value.isFocused) {
-                value.setText(amount.toString())
+                value.setText(CurrencyUtils.formatValue(amount))
             }
         }
     }

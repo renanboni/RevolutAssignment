@@ -2,7 +2,7 @@ package com.example.revolutassingment.features.currencies
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
-import com.example.revolutassingment.core.CurrencyCalculator
+import com.example.revolutassingment.domain.CurrencyCalculator
 import com.example.revolutassingment.domain.entities.Currency
 import com.example.revolutassingment.domain.entities.Rate
 import com.example.revolutassingment.domain.usecases.GetCurrencyUseCase

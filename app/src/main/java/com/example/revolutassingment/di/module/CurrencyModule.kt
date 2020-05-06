@@ -3,8 +3,8 @@ package com.example.revolutassingment.di.module
 import androidx.lifecycle.ViewModel
 import com.example.revolutassingment.di.ViewModelFactoryModule
 import com.example.revolutassingment.di.ViewModelKey
-import com.example.revolutassingment.core.CurrencyCalculator
-import com.example.revolutassingment.core.CurrencyCalculatorImpl
+import com.example.revolutassingment.domain.CurrencyCalculator
+import com.example.revolutassingment.domain.CurrencyCalculatorImpl
 import com.example.revolutassingment.features.currencies.CurrencyFragment
 import com.example.revolutassingment.features.currencies.CurrencyViewModel
 import dagger.Binds

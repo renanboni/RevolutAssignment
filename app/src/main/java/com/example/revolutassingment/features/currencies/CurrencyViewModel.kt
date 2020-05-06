@@ -3,7 +3,7 @@ package com.example.revolutassingment.features.currencies
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.revolutassingment.core.CurrencyCalculator
+import com.example.revolutassingment.domain.CurrencyCalculator
 import com.example.revolutassingment.domain.entities.Rate
 import com.example.revolutassingment.domain.usecases.GetCurrencyUseCase
 import com.example.revolutassingment.domain.usecases.GetRatesUseCase

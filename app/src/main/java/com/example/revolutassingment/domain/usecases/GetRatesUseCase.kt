@@ -14,6 +14,5 @@ class GetRatesUseCase @Inject constructor(
     operator fun invoke(currency: String): Observable<Currency> {
         return currencyRepository.getRates(currency)
             .subscribeOn(scheduler.io)
-            .observeOn(scheduler.mainThread)
     }
 }

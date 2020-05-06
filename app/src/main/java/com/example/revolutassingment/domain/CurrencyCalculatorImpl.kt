@@ -1,15 +1,16 @@
-package com.example.revolutassingment.core
+package com.example.revolutassingment.domain
 
 import com.example.revolutassingment.domain.entities.Currency
 import com.example.revolutassingment.domain.entities.Rate
 import javax.inject.Inject
 
-class CurrencyCalculatorImpl @Inject constructor() : CurrencyCalculator {
+class CurrencyCalculatorImpl @Inject constructor() :
+    CurrencyCalculator {
 
-    private var currencyRates = mutableListOf<Rate>()
+    internal var currencyRates = mutableListOf<Rate>()
 
-    private var amount = 1.0
-    private var baseCurrency = ""
+    internal var amount = 1.0
+    internal var baseCurrency = ""
 
     override fun onNewBaseCurrencySelected(currency: String, amount: Double, currentList: MutableList<Rate>): MutableList<Rate> {
         this.amount = amount
